@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIVE — One Hand. Five Powers.</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --ink:     #08070f;
+  --deep:    #0e0c1a;
+  --panel:   #13111f;
+  --border:  #1e1b30;
+  --dim:     #282440;
+  --ash:     #6b6880;
+  --text:    #ddd9f5;
+  --white:   #f0eeff;
+  --f1:      #ff4d6d; /* Thumb  — Red   */
+  --f2:      #ff9f1c; /* Index  — Amber */
+  --f3:      #ffe566; /* Middle — Gold  */
+  --f4:      #43e97b; /* Ring   — Green */
+  --f5:      #4facfe; /* Pinky  — Blue  */
+  --glow-r:  rgba(255,77,109,0.18);
+  --glow-a:  rgba(255,159,28,0.18);
+  --glow-g:  rgba(255,229,102,0.18);
+  --glow-gr: rgba(67,233,123,0.18);
+  --glow-b:  rgba(79,172,254,0.18);
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--ink);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  overflow-x:hidden;
+}
+
+/* ── SCANLINE TEXTURE ── */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,transparent 2px,
+    rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px
+  );
+  pointer-events:none;z-index:999;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 48px;
+  background:rgba(8,7,15,0.75);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:30px;letter-spacing:6px;
+  background:linear-gradient(90deg,var(--f1),var(--f2),var(--f3),var(--f4),var(--f5));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.nav-fingers{
+  display:flex;gap:6px;
+  list-style:none;
+}
+.nav-fingers li a{
+  display:block;
+  padding:8px 18px;
+  border-radius:3px;
+  font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  text-decoration:none;color:var(--ash);
+  border:1px solid transparent;
+  transition:all .2s;
+}
+.nav-fingers li:nth-child(1) a:hover{color:var(--f1);border-color:var(--f1);background:var(--glow-r);}
+.nav-fingers li:nth-child(2) a:hover{color:var(--f2);border-color:var(--f2);background:var(--glow-a);}
+.nav-fingers li:nth-child(3) a:hover{color:var(--f3);border-color:var(--f3);background:var(--glow-g);}
+.nav-fingers li:nth-child(4) a:hover{color:var(--f4);border-color:var(--f4);background:var(--glow-gr);}
+.nav-fingers li:nth-child(5) a:hover{color:var(--f5);border-color:var(--f5);background:var(--glow-b);}
+.nav-mint{
+  background:var(--f3);color:var(--ink) !important;
+  font-weight:700 !important;letter-spacing:2px;
+  border-radius:4px;
+  -webkit-text-fill-color:var(--ink) !important;
+}
+
+/* ── HERO ── */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;align-items:center;
+  padding:120px 48px 80px;
+  overflow:hidden;
+}
+
+/* ambient orbs */
+.orb{position:absolute;border-radius:50%;filter:blur(140px);pointer-events:none;}
+.orb-1{width:500px;height:500px;background:var(--glow-r);top:-80px;left:-100px;}
+.orb-2{width:400px;height:400px;background:var(--glow-b);bottom:-60px;right:-80px;}
+.orb-3{width:300px;height:300px;background:var(--glow-g);top:40%;left:38%;}
+
+.hero-grid{
+  position:relative;z-index:2;
+  display:grid;
+  grid-template-columns:1fr 480px;
+  gap:60px;align-items:center;
+  max-width:1280px;margin:0 auto;width:100%;
+}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'DM Mono',monospace;
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--f3);
+  margin-bottom:20px;
+}
+.eyebrow-line{width:32px;height:1px;background:var(--f3);}
+
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(72px,9vw,130px);
+  line-height:.92;
+  letter-spacing:2px;
+  margin-bottom:28px;
+}
+.hero-title .stroke{
+  -webkit-text-stroke:2px var(--white);
+  color:transparent;
+}
+.hero-title .solid{color:var(--white);}
+.hero-title .rainbow{
+  background:linear-gradient(90deg,var(--f1),var(--f2),var(--f3),var(--f4),var(--f5));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+.hero-body{
+  font-size:17px;line-height:1.75;color:var(--ash);
+  max-width:440px;margin-bottom:44px;
+}
+
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
+
+.btn-gold{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--f3);color:var(--ink);
+  font-family:'DM Sans',sans-serif;
+  font-weight:700;font-size:14px;letter-spacing:.5px;
+  padding:15px 32px;border-radius:5px;border:none;
+  cursor:pointer;text-decoration:none;
+  transition:transform .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.btn-gold::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.25) 50%,transparent 100%);
+  transform:translateX(-100%);
+  transition:transform .5s;
+}
+.btn-gold:hover::after{transform:translateX(100%);}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(255,229,102,.4);}
+
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-weight:600;font-size:14px;
+  padding:15px 32px;border-radius:5px;
+  border:1px solid var(--border);
+  cursor:pointer;text-decoration:none;
+  transition:border-color .2s,color .2s;
+}
+.btn-ghost:hover{border-color:var(--f5);color:var(--f5);}
+
+/* ── HAND SVG VISUAL ── */
+.hand-stage{
+  position:relative;display:flex;
+  align-items:center;justify-content:center;
+}
+
+.hand-svg-wrap{
+  position:relative;width:420px;height:480px;
+}
+
+/* The hand SVG */
+.hand-svg{
+  width:100%;height:100%;
+  filter:drop-shadow(0 0 60px rgba(255,229,102,.12));
+}
+
+/* Finger glow tips — positioned over each fingertip */
+.finger-tip{
+  position:absolute;
+  width:22px;height:22px;border-radius:50%;
+  transform:translate(-50%,-50%);
+  cursor:pointer;
+  transition:transform .25s;
+}
+.finger-tip::before{
+  content:'';position:absolute;inset:-6px;border-radius:50%;
+  animation:tip-pulse 2.5s ease-in-out infinite;
+}
+.finger-tip:hover{transform:translate(-50%,-50%) scale(1.4);}
+
+.tip-1{top:4%;left:16%; background:var(--f1); box-shadow:0 0 20px var(--f1);}
+.tip-1::before{background:radial-gradient(circle,rgba(255,77,109,.3),transparent 70%);animation-delay:0s;}
+.tip-2{top:2%;left:36%; background:var(--f2); box-shadow:0 0 20px var(--f2);}
+.tip-2::before{background:radial-gradient(circle,rgba(255,159,28,.3),transparent 70%);animation-delay:.5s;}
+.tip-3{top:0%;left:53%; background:var(--f3); box-shadow:0 0 20px var(--f3);}
+.tip-3::before{background:radial-gradient(circle,rgba(255,229,102,.3),transparent 70%);animation-delay:1s;}
+.tip-4{top:3%;left:70%; background:var(--f4); box-shadow:0 0 20px var(--f4);}
+.tip-4::before{background:radial-gradient(circle,rgba(67,233,123,.3),transparent 70%);animation-delay:1.5s;}
+.tip-5{top:12%;left:88%; background:var(--f5); box-shadow:0 0 20px var(--f5);}
+.tip-5::before{background:radial-gradient(circle,rgba(79,172,254,.3),transparent 70%);animation-delay:2s;}
+
+@keyframes tip-pulse{
+  0%,100%{opacity:.6;transform:scale(1);}
+  50%{opacity:1;transform:scale(1.6);}
+}
+
+/* Tooltip labels */
+.finger-label{
+  position:absolute;
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;white-space:nowrap;
+  pointer-events:none;
+  opacity:0;transition:opacity .2s;
+}
+.finger-tip:hover + .finger-label{opacity:1;}
+.finger-label.l1{top:calc(4% - 28px);left:16%;color:var(--f1);transform:translateX(-50%);}
+.finger-label.l2{top:calc(2% - 28px);left:36%;color:var(--f2);transform:translateX(-50%);}
+.finger-label.l3{top:calc(0% - 28px);left:53%;color:var(--f3);transform:translateX(-50%);}
+.finger-label.l4{top:calc(3% - 28px);left:70%;color:var(--f4);transform:translateX(-50%);}
+.finger-label.l5{top:calc(12% - 28px);left:88%;color:var(--f5);transform:translateX(-50%);}
+
+/* ── FIVE POWERS STRIP ── */
+.powers-strip{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:repeat(5,1fr);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.power-cell{
+  padding:36px 28px;
+  border-right:1px solid var(--border);
+  position:relative;overflow:hidden;
+  cursor:pointer;
+  transition:background .25s;
+}
+.power-cell:last-child{border-right:none;}
+.power-cell::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:3px;
+  transition:opacity .25s;opacity:0;
+}
+.power-cell:nth-child(1)::before{background:var(--f1);}
+.power-cell:nth-child(2)::before{background:var(--f2);}
+.power-cell:nth-child(3)::before{background:var(--f3);}
+.power-cell:nth-child(4)::before{background:var(--f4);}
+.power-cell:nth-child(5)::before{background:var(--f5);}
+.power-cell:nth-child(1):hover{background:var(--glow-r);}
+.power-cell:nth-child(2):hover{background:var(--glow-a);}
+.power-cell:nth-child(3):hover{background:var(--glow-g);}
+.power-cell:nth-child(4):hover{background:var(--glow-gr);}
+.power-cell:nth-child(5):hover{background:var(--glow-b);}
+.power-cell:hover::before{opacity:1;}
+
+.power-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:48px;letter-spacing:2px;
+  line-height:1;margin-bottom:8px;
+}
+.p1 .power-num{color:var(--f1);}
+.p2 .power-num{color:var(--f2);}
+.p3 .power-num{color:var(--f3);}
+.p4 .power-num{color:var(--f4);}
+.p5 .power-num{color:var(--f5);}
+
+.power-finger{
+  font-family:'DM Mono',monospace;
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--ash);margin-bottom:14px;
+}
+.power-name{
+  font-size:15px;font-weight:600;color:var(--white);
+  margin-bottom:6px;
+}
+.power-desc{font-size:13px;color:var(--ash);line-height:1.55;}
+
+/* ── ACTIVE ROUND ── */
+.section-wrap{
+  position:relative;z-index:2;
+  max-width:1280px;margin:0 auto;
+  padding:80px 48px;
+}
+.eyebrow{
+  font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--ash);margin-bottom:10px;
+  display:flex;align-items:center;gap:10px;
+}
+.eyebrow span{width:24px;height:1px;background:var(--ash);display:inline-block;}
+.sec-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:56px;letter-spacing:2px;
+  line-height:1;margin-bottom:48px;color:var(--white);
+}
+
+/* Round cards — 5 fingers layout */
+.round-five{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:16px;
+}
+.round-finger-card{
+  border-radius:12px;
+  overflow:hidden;
+  background:var(--panel);
+  border:1px solid var(--border);
+  transition:transform .25s,box-shadow .25s;
+  cursor:pointer;
+}
+.round-finger-card:hover{transform:translateY(-8px);}
+.rfc-top{
+  aspect-ratio:.75;
+  display:flex;align-items:center;justify-content:center;
+  font-size:48px;
+  position:relative;overflow:hidden;
+}
+/* Each card has a colored glow based on finger */
+.rfc-top::after{
+  content:'';position:absolute;inset:0;
+  opacity:.35;
+}
+.rfc-1 .rfc-top{background:radial-gradient(circle at 50% 60%,#2a0a12,var(--deep));}
+.rfc-1 .rfc-top::after{background:radial-gradient(circle at 50% 40%,var(--f1),transparent 70%);}
+.rfc-1:hover{box-shadow:0 20px 50px rgba(255,77,109,.2);}
+.rfc-2 .rfc-top{background:radial-gradient(circle at 50% 60%,#2a1500,var(--deep));}
+.rfc-2 .rfc-top::after{background:radial-gradient(circle at 50% 40%,var(--f2),transparent 70%);}
+.rfc-2:hover{box-shadow:0 20px 50px rgba(255,159,28,.2);}
+.rfc-3 .rfc-top{background:radial-gradient(circle at 50% 60%,#1e1a00,var(--deep));}
+.rfc-3 .rfc-top::after{background:radial-gradient(circle at 50% 40%,var(--f3),transparent 70%);}
+.rfc-3:hover{box-shadow:0 20px 50px rgba(255,229,102,.2);}
+.rfc-4 .rfc-top{background:radial-gradient(circle at 50% 60%,#051a0e,var(--deep));}
+.rfc-4 .rfc-top::after{background:radial-gradient(circle at 50% 40%,var(--f4),transparent 70%);}
+.rfc-4:hover{box-shadow:0 20px 50px rgba(67,233,123,.2);}
+.rfc-5 .rfc-top{background:radial-gradient(circle at 50% 60%,#061528,var(--deep));}
+.rfc-5 .rfc-top::after{background:radial-gradient(circle at 50% 40%,var(--f5),transparent 70%);}
+.rfc-5:hover{box-shadow:0 20px 50px rgba(79,172,254,.2);}
+
+.rfc-emoji{position:relative;z-index:1;font-size:52px;}
+
+.rfc-badge{
+  position:absolute;top:12px;left:12px;z-index:2;
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  padding:4px 10px;border-radius:3px;font-weight:500;
+}
+.rfc-1 .rfc-badge{background:rgba(255,77,109,.15);color:var(--f1);border:1px solid rgba(255,77,109,.3);}
+.rfc-2 .rfc-badge{background:rgba(255,159,28,.15);color:var(--f2);border:1px solid rgba(255,159,28,.3);}
+.rfc-3 .rfc-badge{background:rgba(255,229,102,.15);color:var(--f3);border:1px solid rgba(255,229,102,.3);}
+.rfc-4 .rfc-badge{background:rgba(67,233,123,.15);color:var(--f4);border:1px solid rgba(67,233,123,.3);}
+.rfc-5 .rfc-badge{background:rgba(79,172,254,.15);color:var(--f5);border:1px solid rgba(79,172,254,.3);}
+
+.rfc-body{padding:16px;}
+.rfc-name{font-weight:600;font-size:14px;color:var(--white);margin-bottom:3px;}
+.rfc-creator{font-size:12px;color:var(--ash);font-family:'DM Mono',monospace;}
+.rfc-prize{
+  margin-top:12px;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;letter-spacing:1px;
+}
+.rfc-1 .rfc-prize{color:var(--f1);}
+.rfc-2 .rfc-prize{color:var(--f2);}
+.rfc-3 .rfc-prize{color:var(--f3);}
+.rfc-4 .rfc-prize{color:var(--f4);}
+.rfc-5 .rfc-prize{color:var(--f5);}
+
+/* ── SPIN SECTION ── */
+.spin-section{
+  position:relative;z-index:2;
+  background:var(--panel);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.spin-inner{
+  max-width:1280px;margin:0 auto;
+  padding:80px 48px;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:80px;align-items:center;
+}
+
+/* Five-sector spin wheel */
+.spin-wheel-wrap{
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.spin-wheel{
+  width:340px;height:340px;border-radius:50%;
+  position:relative;overflow:hidden;
+  animation:wheel-spin 18s linear infinite;
+  box-shadow:0 0 80px rgba(255,229,102,.1),0 0 0 4px var(--border);
+}
+@keyframes wheel-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.spin-sector{
+  position:absolute;top:0;left:0;
+  width:100%;height:100%;
+  transform-origin:50% 50%;
+  clip-path:polygon(50% 50%,50% 0%,100% 0%);
+}
+/* 5 sectors = 72° each */
+.s1{transform:rotate(0deg);   background:conic-gradient(from 0deg at 50% 50%, var(--f1) 0deg, var(--f1) 72deg, transparent 72deg);}
+.s2{transform:rotate(72deg);  background:conic-gradient(from 0deg at 50% 50%, var(--f2) 0deg, var(--f2) 72deg, transparent 72deg);}
+.s3{transform:rotate(144deg); background:conic-gradient(from 0deg at 50% 50%, var(--f3) 0deg, var(--f3) 72deg, transparent 72deg);}
+.s4{transform:rotate(216deg); background:conic-gradient(from 0deg at 50% 50%, var(--f4) 0deg, var(--f4) 72deg, transparent 72deg);}
+.s5{transform:rotate(288deg); background:conic-gradient(from 0deg at 50% 50%, var(--f5) 0deg, var(--f5) 72deg, transparent 72deg);}
+
+.spin-wheel-actual{
+  width:340px;height:340px;border-radius:50%;
+  background:conic-gradient(
+    var(--f1) 0deg 72deg,
+    var(--f2) 72deg 144deg,
+    var(--f3) 144deg 216deg,
+    var(--f4) 216deg 288deg,
+    var(--f5) 288deg 360deg
+  );
+  animation:wheel-spin 18s linear infinite;
+  box-shadow:0 0 80px rgba(255,229,102,.1),0 0 0 4px var(--border);
+  position:relative;
+}
+.wheel-center{
+  position:absolute;
+  inset:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.wheel-hub{
+  width:110px;height:110px;border-radius:50%;
+  background:var(--ink);
+  border:3px solid var(--border);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:10;
+}
+.hub-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ash);}
+.hub-prize{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;letter-spacing:1px;color:var(--f3);
+}
+.wheel-pointer{
+  position:absolute;top:-18px;left:50%;
+  transform:translateX(-50%);
+  width:0;height:0;
+  border-left:12px solid transparent;
+  border-right:12px solid transparent;
+  border-top:28px solid var(--f3);
+  z-index:20;
+  filter:drop-shadow(0 0 8px var(--f3));
+}
+
+/* divider lines in wheel */
+.spin-wheel-actual::before{
+  content:'';
+  position:absolute;inset:0;border-radius:50%;
+  background:
+    linear-gradient(0deg,rgba(8,7,15,.5) 1px,transparent 1px),
+    linear-gradient(72deg,rgba(8,7,15,.5) 1px,transparent 1px),
+    linear-gradient(144deg,rgba(8,7,15,.5) 1px,transparent 1px),
+    linear-gradient(216deg,rgba(8,7,15,.5) 1px,transparent 1px),
+    linear-gradient(288deg,rgba(8,7,15,.5) 1px,transparent 1px);
+}
+
+.spin-info h2{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:54px;letter-spacing:2px;line-height:1;
+  color:var(--white);margin-bottom:18px;
+}
+.spin-desc{font-size:15px;color:var(--ash);line-height:1.7;margin-bottom:32px;}
+
+.tiers{display:flex;flex-direction:column;gap:10px;margin-bottom:36px;}
+.tier-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+  border-radius:6px;border:1px solid var(--border);
+  background:var(--deep);
+}
+.tier-finger{
+  display:flex;align-items:center;gap:10px;
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;
+}
+.tier-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.tier-prize{
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;
+}
+
+/* ── LEADERBOARD ── */
+.lb-wrap{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;
+}
+.lb-head{
+  display:grid;grid-template-columns:56px 1fr 100px 120px 100px;
+  padding:14px 24px;
+  border-bottom:1px solid var(--border);
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ash);
+}
+.lb-row{
+  display:grid;grid-template-columns:56px 1fr 100px 120px 100px;
+  padding:16px 24px;border-bottom:1px solid rgba(30,27,48,.6);
+  align-items:center;transition:background .18s;
+}
+.lb-row:hover{background:rgba(255,255,255,.02);}
+.lb-row:last-child{border-bottom:none;}
+.rank-num{
+  font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--dim);
+}
+.rank-top{color:var(--f3);}
+.user-cell{display:flex;align-items:center;gap:12px;}
+.avatar{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:14px;flex-shrink:0;
+}
+.av1{background:rgba(255,77,109,.12);border:1px solid rgba(255,77,109,.3);color:var(--f1);}
+.av2{background:rgba(255,159,28,.12);border:1px solid rgba(255,159,28,.3);color:var(--f2);}
+.av3{background:rgba(255,229,102,.12);border:1px solid rgba(255,229,102,.3);color:var(--f3);}
+.av4{background:rgba(67,233,123,.12);border:1px solid rgba(67,233,123,.3);color:var(--f4);}
+.av5{background:rgba(79,172,254,.12);border:1px solid rgba(79,172,254,.3);color:var(--f5);}
+.u-name{font-weight:600;font-size:14px;}
+.u-addr{font-size:11px;color:var(--ash);font-family:'DM Mono',monospace;}
+.karma-val{font-weight:700;color:var(--f3);font-size:14px;}
+.wins-val{color:var(--text);font-size:14px;}
+.finger-tag{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  padding:3px 8px;border-radius:3px;display:inline-block;
+}
+.ft1{background:rgba(255,77,109,.12);color:var(--f1);}
+.ft2{background:rgba(255,159,28,.12);color:var(--f2);}
+.ft3{background:rgba(255,229,102,.12);color:var(--f3);}
+.ft4{background:rgba(67,233,123,.12);color:var(--f4);}
+.ft5{background:rgba(79,172,254,.12);color:var(--f5);}
+
+/* ── CTA BANNER ── */
+.cta-banner{
+  position:relative;z-index:2;
+  background:var(--deep);
+  border-top:1px solid var(--border);
+  overflow:hidden;
+}
+.cta-banner::before{
+  content:'FIVE FIVE FIVE FIVE FIVE FIVE FIVE FIVE FIVE FIVE FIVE FIVE';
+  position:absolute;inset:0;
+  font-family:'Bebas Neue',sans-serif;font-size:120px;letter-spacing:20px;
+  color:rgba(255,255,255,.02);
+  display:flex;align-items:center;
+  white-space:nowrap;overflow:hidden;
+  pointer-events:none;padding:0 40px;
+}
+.cta-inner{
+  max-width:1280px;margin:0 auto;padding:80px 48px;
+  display:flex;align-items:center;justify-content:space-between;gap:40px;
+  position:relative;z-index:1;
+}
+.cta-left h2{
+  font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:2px;line-height:1;
+  color:var(--white);margin-bottom:12px;
+}
+.cta-sub{font-size:16px;color:var(--ash);}
+.finger-dots{
+  display:flex;gap:12px;align-items:center;
+}
+.fdot{
+  width:16px;height:16px;border-radius:50%;
+  animation:fdot-bounce 1.8s ease-in-out infinite;
+}
+.fdot:nth-child(1){background:var(--f1);animation-delay:0s;}
+.fdot:nth-child(2){background:var(--f2);animation-delay:.15s;}
+.fdot:nth-child(3){background:var(--f3);animation-delay:.3s;}
+.fdot:nth-child(4){background:var(--f4);animation-delay:.45s;}
+.fdot:nth-child(5){background:var(--f5);animation-delay:.6s;}
+@keyframes fdot-bounce{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+}
+
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:2;
+  border-top:1px solid var(--border);
+  padding:44px 48px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.footer-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:6px;
+  background:linear-gradient(90deg,var(--f1),var(--f2),var(--f3),var(--f4),var(--f5));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.footer-sub{font-size:11px;color:var(--ash);margin-top:3px;letter-spacing:1px;}
+.footer-links{display:flex;gap:28px;}
+.footer-links a{
+  font-size:12px;color:var(--ash);text-decoration:none;
+  letter-spacing:.5px;transition:color .2s;
+}
+.footer-links a:hover{color:var(--f3);}
+.footer-copy{font-size:11px;color:var(--dim);}
+
+/* ── TICKER ── */
+.ticker{
+  position:relative;z-index:2;
+  overflow:hidden;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:10px 0;
+  background:rgba(255,229,102,.02);
+}
+.ticker-track{
+  display:flex;gap:48px;
+  white-space:nowrap;width:max-content;
+  animation:marquee 28s linear infinite;
+}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.tick{
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;
+  color:var(--ash);display:flex;align-items:center;gap:10px;
+}
+.tick-sep{font-size:18px;opacity:.3;}
+
+/* Inline SVG hand */
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">FIVE</div>
+  <ul class="nav-fingers">
+    <li><a href="#">Thumb</a></li>
+    <li><a href="#">Index</a></li>
+    <li><a href="#">Middle</a></li>
+    <li><a href="#">Ring</a></li>
+    <li><a href="#">Pinky</a></li>
+    <li><a href="#" class="nav-mint">Mint Now</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow"><span class="eyebrow-line"></span>Round #5 — The Full Hand</div>
+      <h1 class="hero-title">
+        <span class="stroke">ONE</span><br>
+        <span class="solid">HAND.</span><br>
+        <span class="rainbow">FIVE WINS.</span>
+      </h1>
+      <p class="hero-body">
+        Five fingers. Five prize tiers. Five creators daily. Mint the featured NFT, spin the Five Wheel, and claim your prize — from Pinky to Thumb, every finger pays.
+      </p>
+      <div class="hero-actions">
+        <a href="#" class="btn-gold">✋ Mint & Spin</a>
+        <a href="#" class="btn-ghost">See How It Works →</a>
+      </div>
+    </div>
+
+    <!-- HAND VISUAL -->
+    <div class="hand-stage">
+      <div class="hand-svg-wrap">
+        <!-- SVG Hand -->
+        <svg class="hand-svg" viewBox="0 0 420 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="skinGrad" x1="210" y1="480" x2="210" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#1e1b30"/>
+              <stop offset="100%" stop-color="#2d2850"/>
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- PALM -->
+          <path d="M110 280 Q90 340 95 400 Q100 450 160 460 Q210 468 260 460 Q320 450 325 400 Q330 340 310 280 Z"
+                fill="url(#skinGrad)" stroke="#2d2850" stroke-width="1.5"/>
+
+          <!-- THUMB -->
+          <path d="M110 280 Q80 260 65 230 Q52 200 60 175 Q68 155 82 155 Q96 155 102 170 Q112 195 115 230 Z"
+                fill="url(#skinGrad)" stroke="var(--f1)" stroke-width="2" filter="url(#glow)"/>
+          <!-- Thumb tip glow -->
+          <circle cx="68" cy="163" r="12" fill="var(--f1)" opacity=".25"/>
+          <circle cx="68" cy="163" r="6" fill="var(--f1)" opacity=".7"/>
+
+          <!-- INDEX FINGER -->
+          <path d="M145 285 Q140 230 138 175 Q137 135 148 115 Q158 98 172 100 Q186 102 190 120 Q195 145 192 190 Q190 240 188 285 Z"
+                fill="url(#skinGrad)" stroke="var(--f2)" stroke-width="2" filter="url(#glow)"/>
+          <circle cx="169" cy="106" r="12" fill="var(--f2)" opacity=".25"/>
+          <circle cx="169" cy="106" r="6" fill="var(--f2)" opacity=".7"/>
+
+          <!-- MIDDLE FINGER -->
+          <path d="M192 285 Q192 225 192 165 Q192 118 202 98 Q212 82 226 84 Q240 86 244 102 Q248 125 246 170 Q244 228 242 285 Z"
+                fill="url(#skinGrad)" stroke="var(--f3)" stroke-width="2.5" filter="url(#glow)"/>
+          <circle cx="224" cy="89" r="13" fill="var(--f3)" opacity=".25"/>
+          <circle cx="224" cy="89" r="7" fill="var(--f3)" opacity=".8"/>
+
+          <!-- RING FINGER -->
+          <path d="M244 285 Q248 228 252 175 Q256 128 266 112 Q276 98 290 100 Q304 102 306 118 Q310 140 306 185 Q302 235 298 285 Z"
+                fill="url(#skinGrad)" stroke="var(--f4)" stroke-width="2" filter="url(#glow)"/>
+          <circle cx="288" cy="107" r="12" fill="var(--f4)" opacity=".25"/>
+          <circle cx="288" cy="107" r="6" fill="var(--f4)" opacity=".7"/>
+
+          <!-- PINKY -->
+          <path d="M300 285 Q306 240 312 200 Q318 168 328 155 Q338 144 350 148 Q362 152 362 172 Q362 196 352 226 Q340 258 325 285 Z"
+                fill="url(#skinGrad)" stroke="var(--f5)" stroke-width="2" filter="url(#glow)"/>
+          <circle cx="351" cy="157" r="11" fill="var(--f5)" opacity=".25"/>
+          <circle cx="351" cy="157" r="5" fill="var(--f5)" opacity=".7"/>
+
+          <!-- KNUCKLE LINES -->
+          <path d="M128 310 Q210 320 298 310" stroke="var(--border)" stroke-width="1" fill="none"/>
+          <path d="M118 335 Q210 348 308 335" stroke="var(--border)" stroke-width="1" fill="none"/>
+
+          <!-- WRIST -->
+          <path d="M110 400 Q90 440 110 470 Q155 480 210 480 Q265 480 310 470 Q330 440 310 400"
+                fill="url(#skinGrad)" stroke="#2d2850" stroke-width="1"/>
+        </svg>
+
+        <!-- Hover labels (appear on hover — CSS handles it but we place them) -->
+        <div class="finger-tip tip-1" title="Thumb — BURN"></div>
+        <div class="finger-tip tip-2" title="Index — POINT"></div>
+        <div class="finger-tip tip-3" title="Middle — PEAK"></div>
+        <div class="finger-tip tip-4" title="Ring — BOND"></div>
+        <div class="finger-tip tip-5" title="Pinky — PROMISE"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="tick">🔴 Thumb Tier — 0x9c..d2 just won $100<span class="tick-sep">◆</span></span>
+    <span class="tick">🟠 Index Tier — 3 slots left<span class="tick-sep">◆</span></span>
+    <span class="tick">🟡 Middle Jackpot — $250 USDC<span class="tick-sep">◆</span></span>
+    <span class="tick">🟢 Ring Tier — New Creator: vaultmaxi<span class="tick-sep">◆</span></span>
+    <span class="tick">🔵 Pinky Guarantee — Everyone wins minimum $2<span class="tick-sep">◆</span></span>
+    <span class="tick">✋ Total Paid: $92,400 USDC<span class="tick-sep">◆</span></span>
+    <span class="tick">🔴 Thumb Tier — 0x9c..d2 just won $100<span class="tick-sep">◆</span></span>
+    <span class="tick">🟠 Index Tier — 3 slots left<span class="tick-sep">◆</span></span>
+    <span class="tick">🟡 Middle Jackpot — $250 USDC<span class="tick-sep">◆</span></span>
+    <span class="tick">🟢 Ring Tier — New Creator: vaultmaxi<span class="tick-sep">◆</span></span>
+    <span class="tick">🔵 Pinky Guarantee — Everyone wins minimum $2<span class="tick-sep">◆</span></span>
+    <span class="tick">✋ Total Paid: $92,400 USDC<span class="tick-sep">◆</span></span>
+  </div>
+</div>
+
+<!-- FIVE POWERS STRIP -->
+<div class="powers-strip">
+  <div class="power-cell p1">
+    <div class="power-finger">Thumb</div>
+    <div class="power-num">01</div>
+    <div class="power-name">Burn &amp; Win</div>
+    <div class="power-desc">Mint to burn. The rarest tier. Jackpot starts at $100 and grows with every round unclaimed.</div>
+  </div>
+  <div class="power-cell p2">
+    <div class="power-finger">Index</div>
+    <div class="power-num">02</div>
+    <div class="power-name">Point &amp; Earn</div>
+    <div class="power-desc">Stake $FIVE tokens to earn daily yields. Your index directs your earnings — point it right.</div>
+  </div>
+  <div class="power-cell p3">
+    <div class="power-finger">Middle</div>
+    <div class="power-num">03</div>
+    <div class="power-name">Peak Quests</div>
+    <div class="power-desc">Complete daily onchain quests. Stack Five Karma — the points that determine your airdrop share.</div>
+  </div>
+  <div class="power-cell p4">
+    <div class="power-finger">Ring</div>
+    <div class="power-num">04</div>
+    <div class="power-name">Bond Creators</div>
+    <div class="power-desc">Every round spotlights a new creator. Mint their NFT to back them — they share in the round's fees.</div>
+  </div>
+  <div class="power-cell p5">
+    <div class="power-finger">Pinky</div>
+    <div class="power-num">05</div>
+    <div class="power-name">Promise Floor</div>
+    <div class="power-desc">The Pinky Promise: every spin wins something. Minimum $2 USDC guaranteed, no exceptions.</div>
+  </div>
+</div>
+
+<!-- ACTIVE ROUNDS -->
+<div class="section-wrap">
+  <div class="eyebrow"><span></span>This Hand</div>
+  <div class="sec-title">Five Active Rounds</div>
+  <div class="round-five">
+
+    <div class="round-finger-card rfc-1">
+      <div class="rfc-top">
+        <div class="rfc-badge">Thumb</div>
+        <div class="rfc-emoji">🔥</div>
+      </div>
+      <div class="rfc-body">
+        <div class="rfc-name">Burn Season</div>
+        <div class="rfc-creator">KAFANI</div>
+        <div class="rfc-prize">$100 JACKPOT</div>
+      </div>
+    </div>
+
+    <div class="round-finger-card rfc-2">
+      <div class="rfc-top">
+        <div class="rfc-badge">Index</div>
+        <div class="rfc-emoji">👆</div>
+      </div>
+      <div class="rfc-body">
+        <div class="rfc-name">Direction</div>
+        <div class="rfc-creator">Valentinaart.eth</div>
+        <div class="rfc-prize">$50 PRIZE</div>
+      </div>
+    </div>
+
+    <div class="round-finger-card rfc-3">
+      <div class="rfc-top">
+        <div class="rfc-badge">Middle — PEAK</div>
+        <div class="rfc-emoji">⭐</div>
+      </div>
+      <div class="rfc-body">
+        <div class="rfc-name">Perpetual Peak</div>
+        <div class="rfc-creator">clarkd</div>
+        <div class="rfc-prize">$250 JACKPOT</div>
+      </div>
+    </div>
+
+    <div class="round-finger-card rfc-4">
+      <div class="rfc-top">
+        <div class="rfc-badge">Ring</div>
+        <div class="rfc-emoji">💚</div>
+      </div>
+      <div class="rfc-body">
+        <div class="rfc-name">Bond Protocol</div>
+        <div class="rfc-creator">GODLETXX</div>
+        <div class="rfc-prize">$30 PRIZE</div>
+      </div>
+    </div>
+
+    <div class="round-finger-card rfc-5">
+      <div class="rfc-top">
+        <div class="rfc-badge">Pinky</div>
+        <div class="rfc-emoji">🤙</div>
+      </div>
+      <div class="rfc-body">
+        <div class="rfc-name">The Promise</div>
+        <div class="rfc-creator">Niqqi</div>
+        <div class="rfc-prize">$2 FLOOR</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SPIN WHEEL -->
+<div class="spin-section">
+  <div class="spin-inner">
+    <div class="spin-wheel-wrap">
+      <div style="position:relative;">
+        <div class="wheel-pointer"></div>
+        <div class="spin-wheel-actual"></div>
+        <div class="wheel-center">
+          <div class="wheel-hub">
+            <div class="hub-label">Top Prize</div>
+            <div class="hub-prize">$250</div>
+            <div class="hub-label">USDC</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="spin-info">
+      <div class="eyebrow"><span></span>The Five Wheel</div>
+      <h2>SPIN ALL<br>FIVE TIERS</h2>
+      <p class="spin-desc">One $1 USDC spin. Five possible outcomes — one for each finger. Land on the Middle finger (gold) and you take the jackpot. Every other finger still pays. There's no losing hand here.</p>
+      <div class="tiers">
+        <div class="tier-row">
+          <div class="tier-finger"><div class="tier-dot" style="background:var(--f1)"></div> Thumb — Rarest</div>
+          <div class="tier-prize" style="color:var(--f1)">$100</div>
+        </div>
+        <div class="tier-row">
+          <div class="tier-finger"><div class="tier-dot" style="background:var(--f2)"></div> Index</div>
+          <div class="tier-prize" style="color:var(--f2)">$50</div>
+        </div>
+        <div class="tier-row">
+          <div class="tier-finger"><div class="tier-dot" style="background:var(--f3)"></div> Middle — Jackpot</div>
+          <div class="tier-prize" style="color:var(--f3)">$250</div>
+        </div>
+        <div class="tier-row">
+          <div class="tier-finger"><div class="tier-dot" style="background:var(--f4)"></div> Ring</div>
+          <div class="tier-prize" style="color:var(--f4)">$30</div>
+        </div>
+        <div class="tier-row">
+          <div class="tier-finger"><div class="tier-dot" style="background:var(--f5)"></div> Pinky — Promise</div>
+          <div class="tier-prize" style="color:var(--f5)">$2</div>
+        </div>
+      </div>
+      <a href="#" class="btn-gold" style="display:inline-flex;">✋ Spin the Five Wheel — $1 USDC</a>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="section-wrap">
+  <div class="eyebrow"><span></span>Top Hands</div>
+  <div class="sec-title">Leaderboard</div>
+  <div class="lb-wrap">
+    <div class="lb-head">
+      <span>#</span><span>Player</span><span>Karma</span><span>Wins</span><span>Finger</span>
+    </div>
+    <div class="lb-row">
+      <div class="rank-num rank-top">#1</div>
+      <div class="user-cell"><div class="avatar av3">J</div><div><div class="u-name">jessepolak</div><div class="u-addr">0x849...1a3f</div></div></div>
+      <div class="karma-val">48,210</div>
+      <div class="wins-val">31</div>
+      <div><span class="finger-tag ft3">Middle</span></div>
+    </div>
+    <div class="lb-row">
+      <div class="rank-num rank-top">#2</div>
+      <div class="user-cell"><div class="avatar av1">D</div><div><div class="u-name">dwr.eth</div><div class="u-addr">0x3b4...c9a2</div></div></div>
+      <div class="karma-val">41,880</div>
+      <div class="wins-val">28</div>
+      <div><span class="finger-tag ft1">Thumb</span></div>
+    </div>
+    <div class="lb-row">
+      <div class="rank-num rank-top">#3</div>
+      <div class="user-cell"><div class="avatar av2">V</div><div><div class="u-name">vitalik.eth</div><div class="u-addr">0xd8d...7b10</div></div></div>
+      <div class="karma-val">39,500</div>
+      <div class="wins-val">24</div>
+      <div><span class="finger-tag ft2">Index</span></div>
+    </div>
+    <div class="lb-row">
+      <div class="rank-num">#4</div>
+      <div class="user-cell"><div class="avatar av4">C</div><div><div class="u-name">cdixon.eth</div><div class="u-addr">0xf21...44cc</div></div></div>
+      <div class="karma-val">32,100</div>
+      <div class="wins-val">19</div>
+      <div><span class="finger-tag ft4">Ring</span></div>
+    </div>
+    <div class="lb-row">
+      <div class="rank-num">#5</div>
+      <div class="user-cell"><div class="avatar av5">L</div><div><div class="u-name">linda.eth</div><div class="u-addr">0x62a...88f5</div></div></div>
+      <div class="karma-val">28,450</div>
+      <div class="wins-val">17</div>
+      <div><span class="finger-tag ft5">Pinky</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="cta-inner">
+    <div class="cta-left">
+      <h2>RAISE YOUR<br>HAND.</h2>
+      <p class="cta-sub">Five fingers. Five chances. One hand always wins.</p>
+    </div>
+    <div class="finger-dots">
+      <div class="fdot"></div>
+      <div class="fdot"></div>
+      <div class="fdot"></div>
+      <div class="fdot"></div>
+      <div class="fdot"></div>
+    </div>
+    <a href="#" class="btn-gold" style="font-size:16px;padding:18px 40px;">✋ Open Your Hand</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">FIVE</div>
+    <div class="footer-sub">One Hand. Five Powers.</div>
+  </div>
+  <div class="footer-links">
+    <a href="#">Thumb</a>
+    <a href="#">Index</a>
+    <a href="#">Middle</a>
+    <a href="#">Ring</a>
+    <a href="#">Pinky</a>
+    <a href="#">Terms</a>
+  </div>
+  <div class="footer-copy">© 2026 FIVE Labs. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
